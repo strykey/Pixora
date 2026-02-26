@@ -1,0 +1,40 @@
+
+Pixora Restrictive Attribution License (PRAL) 1.0
+
+Copyright (c) 2026 Strykey
+
+All rights reserved.
+
+Permission is granted to use, copy and modify the source code and files contained in this repository only under the following conditions. Any use of any code, snippet, function, module or substantial portion of this repository in another project, product, service or publication requires clear and conspicuous attribution to the original author. Attribution must include the author's name and a link to the original repository.
+
+1. Attribution requirement
+
+Any distribution, publication, deployment, embedding, or other use of any portion of this code in source or binary form requires that the following statement appear in a place reasonably visible to end users, or in the accompanying documentation when no user interface is present:
+
+"Contains code from Pixora by Strykey. See https://github.com/strykey/Pixora for the original source."
+
+When a code snippet, function, module, or other extract of this repository is copy-pasted into another project, the source file header in the target file must include the following two lines exactly, replacing placeholders as appropriate:
+
+"Portion of code from Pixora by Strykey. Original: https://github.com/strykey/Pixora"
+
+2. Non commercial use
+
+This software may not be used, distributed, sold, or otherwise exploited for commercial purposes without prior express written permission from the copyright holder.
+
+3. Source preservation
+
+Any redistributed or derivative work based on this software must preserve this license and the copyright notice in all redistributed source files and must include the required attribution text in any distributed binaries or packages.
+
+4. No warranty
+
+THIS SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. THE AUTHOR SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE.
+
+5. Termination
+
+Any failure to comply with the terms of this license terminates the rights granted by this license immediately. Upon termination, all rights to use, distribute, or copy the covered code are revoked and must cease.
+
+6. Enforcement
+
+The author reserves the right to pursue any remedies available under applicable law for violations of this license.
+
+
