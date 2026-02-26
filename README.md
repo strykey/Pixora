@@ -4,6 +4,8 @@
 
 Pixora converts any image into authentic pixel art using a real conversion pipeline: perceptual color quantization, Floyd-Steinberg dithering, edge enhancement, and smart automatic pixel size detection. The result looks like something you drew by hand in Aseprite, not like a blurry resize filter. Drop your image, hit Convert, done.
 
+<img width="1366" height="768" alt="Pixora1" src="https://github.com/user-attachments/assets/d407fb5f-7bb4-4bbe-8bea-6bc8b3c56828" />
+
 ## What makes it different
 
 Most pixel art converters just resize the image down and call it a day. Pixora does not do that. It analyzes your image dimensions and content to automatically pick a pixel block size that makes sense for the subject, builds a color palette using median cut quantization based on what is actually in your image, applies dithering to smooth out color transitions, and darkens edges to give the output that handcrafted depth you would normally add manually. The whole process is automatic. You do not have to touch a single setting if you do not want to.
@@ -93,3 +95,4 @@ You cannot redistribute this software under a different license or remove the or
 **Strykey**
 
 *"Pixel art without the 40 hours."*
+
