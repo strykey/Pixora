@@ -75,15 +75,22 @@ header{
 
 /* LAYOUT */
 .workspace{
-  display:grid;grid-template-columns:290px 1fr;
+  display:flex;flex-direction:row;
   flex:1;overflow:hidden;
   animation:riseIn .5s .2s cubic-bezier(.22,1,.36,1) both;
 }
+.resizer{
+  width:5px;flex-shrink:0;cursor:col-resize;
+  background:var(--border);transition:background .15s;
+  position:relative;z-index:10;
+}
+.resizer:hover,.resizer.dragging{background:var(--accent)}
 
 /* SIDEBAR */
 .sidebar{
-  background:var(--panel);border-right:1.5px solid var(--border);
+  background:var(--panel);
   display:flex;flex-direction:column;overflow-y:auto;padding:20px 18px;gap:22px;
+  width:290px;flex-shrink:0;
 }
 .sidebar::-webkit-scrollbar{width:3px}
 .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -220,11 +227,17 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.3)}
 
 /* Stage */
 .stage{
-  flex:1;display:flex;align-items:center;justify-content:center;
+  flex:1;display:flex;align-items:flex-start;justify-content:flex-start;
   overflow:auto;padding:32px;background:var(--bg);
+  min-width:0;
+}
+.stage-inner{
+  margin:auto;
+  min-width:0;
 }
 .stage::-webkit-scrollbar{width:6px;height:6px}
 .stage::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.stage::-webkit-scrollbar-corner{background:var(--bg)}
 
 .empty{
   display:flex;flex-direction:column;align-items:center;gap:14px;
@@ -236,19 +249,17 @@ input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.3)}
 .e-h{font-family:var(--font-px);font-size:10px;color:var(--muted);letter-spacing:2px}
 .e-p{font-size:12px;color:var(--muted);opacity:.65;line-height:1.7}
 
-/* Canvas wrapper — CRITICAL: no fixed size, driven purely by canvas content */
+/* Canvas wrapper — no transform, real CSS dimensions for proper scroll */
 .cv-wrap{
   display:none;
   position:relative;
-  transform-origin:center center;
-  transition:transform .22s cubic-bezier(.4,0,.2,1);
   box-shadow:0 12px 48px rgba(79,168,216,.17),0 0 0 1.5px var(--border);
   border-radius:3px;overflow:hidden;
-  /* width/height NOT set — canvas element drives the size */
+  flex-shrink:0;
 }
-.cv-wrap.show{display:block}
+.cv-wrap.show{display:inline-block}
 .cv-wrap.pop{animation:cvPop .38s cubic-bezier(.22,1,.36,1)}
-canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;max-width:none;max-height:none}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;}
 
 /* Info bar */
 .infobar{
@@ -351,6 +362,7 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;max-w
       </div>
 
     </div>
+    <div class="resizer" id="resizer"></div>
 
     <div class="cv-area">
       <div class="toolbar">
@@ -367,14 +379,16 @@ canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;max-w
       </div>
 
       <div class="stage" id="stage">
-        <div class="empty" id="emp">
-          <div class="e-grid" id="eg"></div>
-          <div class="e-h">No image loaded</div>
-          <div class="e-p">Drop an image or click Browse<br/>to get started</div>
-        </div>
-        <div class="cv-wrap" id="cvW">
-          <canvas id="oC"></canvas>
-          <canvas id="sC" style="display:none"></canvas>
+        <div class="stage-inner" id="stageInner">
+          <div class="empty" id="emp">
+            <div class="e-grid" id="eg"></div>
+            <div class="e-h">No image loaded</div>
+            <div class="e-p">Drop an image or click Browse<br/>to get started</div>
+          </div>
+          <div class="cv-wrap" id="cvW">
+            <canvas id="oC"></canvas>
+            <canvas id="sC" style="display:none"></canvas>
+          </div>
         </div>
       </div>
 
@@ -549,7 +563,13 @@ function setView(v,btn){
 
 function dZoom(d){zL=Math.max(.05,Math.min(8,zL+d));applyZoom()}
 function applyZoom(){
-  document.getElementById('cvW').style.transform=`scale(${zL})`;
+  const oc=document.getElementById('oC');
+  const sc=document.getElementById('sC');
+  if(!oc.width)return;
+  const nw=Math.round(oc.width*zL);
+  const nh=Math.round(oc.height*zL);
+  oc.style.width=nw+'px';oc.style.height=nh+'px';
+  sc.style.width=nw+'px';sc.style.height=nh+'px';
   document.getElementById('zV').textContent=Math.round(zL*100)+'%';
 }
 
@@ -557,6 +577,28 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('stage').addEventListener('wheel',e=>{
     e.preventDefault();dZoom(e.deltaY<0?.1:-.1);
   },{passive:false});
+
+  // Sidebar resize via drag
+  const resizer=document.getElementById('resizer');
+  const sidebar=document.querySelector('.sidebar');
+  let isResizing=false,startX=0,startW=0;
+  resizer.addEventListener('mousedown',e=>{
+    isResizing=true;startX=e.clientX;startW=sidebar.offsetWidth;
+    resizer.classList.add('dragging');
+    document.body.style.cursor='col-resize';
+    document.body.style.userSelect='none';
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!isResizing)return;
+    const newW=Math.max(220,Math.min(480,startW+(e.clientX-startX)));
+    sidebar.style.width=newW+'px';
+    sidebar.style.flexShrink='0';
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!isResizing)return;
+    isResizing=false;resizer.classList.remove('dragging');
+    document.body.style.cursor='';document.body.style.userSelect='';
+  });
 });
 
 function setProg(show,txt,pct){
